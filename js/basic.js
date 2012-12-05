@@ -2,23 +2,23 @@ var $currTime = 0;
 var $displayStartTime = 0;
 var $displayStopTime = 0;
 
-
+$(document).ready(function() {
+  $('#clock').simpleClock();
+});
 	
 $(function() {
 var timecaptain = {}
 timecaptain.init = {}
 timecaptain.init.db = {}
 
-
-	
-	$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59:99" data-direction="up" ></span>').trigger('create');
+	$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 99" data-direction="up" ></span>').trigger('create');
 	$('.counter').counter();
 	
 	$('#start_stop_button').on('click',function(){
 
 		if($displayStartTime == 0) {
 				
-			$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59:59" data-direction="up" ></span>').trigger('create');
+			$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 59" data-direction="up" ></span>').trigger('create');
 			$('.counter').counter();
 			$currTime = new Date();
 			$displayStartTime = $currTime.getTime();
@@ -68,7 +68,10 @@ timecaptain.init.db = {}
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
 			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,function) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,temp_customer,temp_project,temp_function],
-			 showAllTodo(temp_start_time, temp_stop_time));
+			 //showAllTodo(temp_start_time, temp_stop_time)
+			 timecaptain.init.getAllRecords()
+			
+			);
 		});
 	}
 	
@@ -82,7 +85,7 @@ timecaptain.init.db = {}
 	
 	// getting alle Records from the Database
 	timecaptain.init.getAllRecords = function(){
-		
+		$('ul.list').html('');
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
 			tx.executeSql("SELECT * FROM records", [], function(tx,result){
@@ -137,18 +140,19 @@ timecaptain.init.db = {}
 	}
 
 
-	// deleting all tables
+	// deleting all records
 	
-	timecaptain.init.deleteTables = function(){
+	timecaptain.init.deleteAllRecords = function(){
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
-			tx.executeSql("DROP TABLE IF EXISTS records", []);
-
+			//tx.executeSql("DROP TABLE IF EXISTS records", []);
+			tx.executeSql("DELETE FROM records", []);			
 		});
 	}
 	
 	$('#delete_all_button').on('click',function(){
-		timecaptain.init.deleteTables();	
+		timecaptain.init.deleteAllRecords();	
+		timecaptain.init.getAllRecords()
 	});
 	
 	
@@ -203,9 +207,14 @@ timecaptain.init.db = {}
 		}
 	}
 		init();
+
 		
-		
-	// Loading DatePicker
-	$('#todo_due_date').datepicker();
-	
 });
+
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@
 	<script src="js/jquery.mobile-1.2.0.min.js"></script>
 	<script src="js/basic.js"></script>
 	<script src="js/jquery.counter.js"></script>
-
+	<script src="js/ticktoo.simpleClock.js"></script>
 
 	
 	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
@@ -32,7 +32,9 @@
 			
 			<div class="content" data-role="content">
 				
-				<div id="counter" style="position:relative; width: 100%; text-align: center; "></div>
+				<div id="counter"></div>
+				<div id="blinker_container"><span id="blinker">:</span></div>
+				<div id="clock"><span id="date"></span><span id="time"></span></div>
 				
 				<a href="" id="start_stop_button" data-role="button">Start</a>
 				

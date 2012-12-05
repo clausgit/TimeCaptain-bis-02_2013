@@ -28,9 +28,11 @@ var part;
             return data.down ? stop >= current : stop <= current;
         };
 
+
         var tick = function() {
 
 		if ($displayStartTime != 0) {
+				
             var e = $(this);
             var data = e.data('counter');
             var i = data.parts.length - 1;
@@ -55,6 +57,7 @@ var part;
         };
 
         var refresh = function(e, to) {
+
             var data = e.data('counter');
             var i = data.parts.length - 1;
             while (i >= to) {
