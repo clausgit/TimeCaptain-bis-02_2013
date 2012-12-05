@@ -5,6 +5,10 @@ var $displayStopTime = 0;
 $(document).ready(function() {
   $('#clock').simpleClock();
 });
+
+$(document).on('mobileinit',function(){
+   $.mobile.selectmenu.prototype.options.nativeMenu = false;
+});
 	
 $(function() {
 var timecaptain = {}
@@ -208,8 +212,15 @@ timecaptain.init.db = {}
 	}
 		init();
 
+
+		$("#customer_select").change(function() {
+		    var $selected = $(this).val();
+		 	alert($selected);
+		});
 		
 });
+
+
 
 
 
