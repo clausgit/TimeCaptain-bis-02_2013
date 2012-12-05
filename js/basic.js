@@ -2,13 +2,15 @@ var $currTime = 0;
 var $displayStartTime = 0;
 var $displayStopTime = 0;
 
+var $temp_customer_selected = 0;
+var $temp_project_selected = 0;
+var $temp_function_selected = 0;
+
 $(document).ready(function() {
   $('#clock').simpleClock();
+	$.mobile.selectmenu.prototype.options.nativeMenu = false;
 });
 
-$(document).on('mobileinit',function(){
-   $.mobile.selectmenu.prototype.options.nativeMenu = false;
-});
 	
 $(function() {
 var timecaptain = {}
@@ -33,10 +35,10 @@ timecaptain.init.db = {}
 			$currTime = new Date();
 			$displayStopTime = $currTime.getTime();
 
-			var $Test_Customer = 44;
-			var $Test_Project = 55;
-			var $Test_Function = 66;
-			timecaptain.init.addTodo($displayStartTime, $displayStopTime, $Test_Customer, $Test_Project, $Test_Function);
+			//var $Test_Customer = 44;
+			//var $Test_Project = 55;
+			//var $Test_Function = 66;
+			timecaptain.init.addTodo($displayStartTime, $displayStopTime);
 			
 			$("#start_stop_button .ui-btn-text").text('Start');
 
@@ -68,10 +70,10 @@ timecaptain.init.db = {}
 	// adding created todo
 	// adding created todo
 	// $displayStartTime, $displayStopTime, $Test_Customer, $Test_Project, $Test_Function
-	timecaptain.init.addTodo = function(temp_start_time, temp_stop_time, temp_customer, temp_project, temp_function){
+	timecaptain.init.addTodo = function(temp_start_time, temp_stop_time){
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
-			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,function) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,temp_customer,temp_project,temp_function],
+			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,function) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_function_selected],
 			 //showAllTodo(temp_start_time, temp_stop_time)
 			 timecaptain.init.getAllRecords()
 			
@@ -99,10 +101,16 @@ timecaptain.init.db = {}
 					temp_id = result.rows.item(i).ID;
 					temp_start_time = result.rows.item(i).start_time;
 					temp_stop_time = result.rows.item(i).stop_time;
+					temp_customer = result.rows.item(i).customer;
+					temp_project = result.rows.item(i).project;
+					temp_function = result.rows.item(i).function;
 					$('ul.list').append(
 						'<li>ID: ' + temp_id + '</span>' +
 						'Start: ' + temp_start_time + ' ' +
 						'Stop: ' + temp_stop_time + ' ' +
+						'Kunde: ' + temp_customer + ' ' +
+						'Projekt: ' + temp_project + ' ' +
+						'Tärtigkeit: ' + temp_function + ' ' +
 						'<a href="#" id="delete"> Delete </a>' +
 						'<input id="this_id" value="' + temp_id + '" type="hidden"></li>'); 
 						$('li:last').addClass('highlight').delay(1000).queue(function(next){ $(this).removeClass('highlight'); next(); });
@@ -213,9 +221,16 @@ timecaptain.init.db = {}
 		init();
 
 
-		$("#customer_select").change(function() {
-		    var $selected = $(this).val();
-		 	alert($selected);
+		$("#select-customer").change(function() {
+		    $temp_customer_selected = $(this).val();
+		});
+
+		$("#select-project").change(function() {
+		    $temp_project_selected = $(this).val();
+		});
+
+		$("#select-function").change(function() {
+		    $temp_function_selected = $(this).val();
 		});
 		
 });
