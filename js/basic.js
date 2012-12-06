@@ -2,9 +2,9 @@ var $currTime = 0;
 var $displayStartTime = 0;
 var $displayStopTime = 0;
 
-var $temp_customer_selected = 3;
-var $temp_project_selected = 3;
-var $temp_activity_selected = 3;
+var $temp_customer_selected = 33;
+var $temp_project_selected = 44;
+var $temp_activity_selected = 55;
 
 $(document).ready(function() {
   $('#clock').simpleClock();
@@ -33,7 +33,8 @@ timecaptain.init.db = {}
 			} else {
 				$currTime = new Date();
 				$displayStopTime = $currTime.getTime();
-				timecaptain.init.addTodo($displayStartTime, $displayStopTime);
+				timecaptain.init.addRecord($displayStartTime, $displayStopTime);
+				
 				$("#start_stop_button .ui-btn-text").html('<br>Start<br><br>');
 				//$('#start_stop_button').attr('data-theme', 'a').removeClass('ui-body-b').addClass('ui-body-a').trigger('create');
 				$displayStartTime = 0;
@@ -58,6 +59,8 @@ timecaptain.init.db = {}
 			tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customer_name VARCHAR, customer_projects VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS projects (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, project_name VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS activities (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, activity_name VARCHAR, activity_rate INTEGER)", []);
+			
+			//tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES ('55','66','77','88','99')", []);
 			
 			tx.executeSql("DELETE FROM customers", []);
 			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Stadtwerke Köln')", []);
@@ -127,14 +130,14 @@ timecaptain.init.db = {}
 
 	// adding record
 	// $displayStartTime, $displayStopTime, $Test_Customer, $Test_Project, $Test_Function
-	timecaptain.init.addTodo = function(temp_start_time, temp_stop_time){
+	timecaptain.init.addRecord = function(temp_start_time, temp_stop_time){
+		
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
-			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_activity_selected],
+			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_activity_selected]);
+			//tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES ('55','66','77','88','99')", []);
 			 //showAllTodo(temp_start_time, temp_stop_time)
-			 timecaptain.init.getAllRecords()
-			
-			);
+			 timecaptain.init.getAllRecords();
 		});
 	}
 	
@@ -148,8 +151,9 @@ timecaptain.init.db = {}
 	
 	// getting alle Records from the Database
 	timecaptain.init.getAllRecords = function(){
-		$('ul.show_all_records').html('');
+		$('#list_off_all_records').html('');
 		var database = timecaptain.init.db;
+		
 		database.transaction(function(tx){
 			tx.executeSql("SELECT * FROM records", [], function(tx,result){
 				for (var i=0; i < result.rows.length; i++) {
@@ -179,25 +183,32 @@ timecaptain.init.db = {}
 					var temp_view_stop_seconds = StopTime.getSeconds();
 					temp_view_stop_time = temp_view_stop_month + '.' + temp_view_stop_day + '.' + temp_view_stop_year + '&nbsp;' + temp_view_stop_hours + ':' + temp_view_stop_minutes + ':' + temp_view_stop_seconds + ' Uhr';
 	
+	
 
-					$('ul.show_all_records').append(
+	
+					$('#list_off_all_records').append(
 						'<li>' +
 						'Start: ' + temp_view_start_time + ' ' +
 						'Stop: ' + temp_view_stop_time + '<br>' +
 						'Kunde: ' + temp_customer + ' ' +
 						'Projekt: ' + temp_project + ' ' +
 						'Tätigkeit: ' + temp_activity + ' ' +
-						'</li>'); 
+						'</li>');
 
 						//'<a href="#" id="delete"> Delete </a>' +
 						//'<input id="this_id" value="' + temp_id + '" type="hidden"></li>');
-						
+					$('#list_off_all_records').listview('refresh');	
 				}
+				
+				
 			});
 		});
-		//$('#page_2').trigger('create');
 		
-		$('#page_2').page('refresh');
+		
+		
+		//$('#list_off_all_records').trigger('create');
+		
+		//$('#page_2').page('refresh');
 	}
 	
 	
@@ -252,7 +263,7 @@ timecaptain.init.db = {}
 	
 	$('#delete_all_button').on('click',function(){
 		timecaptain.init.deleteAllRecords();	
-		timecaptain.init.getAllRecords();
+		$('#list_off_all_records').html('');
 	});
 	
 	
