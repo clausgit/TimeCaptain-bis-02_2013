@@ -2,21 +2,12 @@ var $currTime = 0;
 var $displayStartTime = 0;
 var $displayStopTime = 0;
 
-var $temp_customer_selected = 0;
-var $temp_project_selected = 0;
-var $temp_function_selected = 0;
+var $temp_customer_selected = 3;
+var $temp_project_selected = 3;
+var $temp_activity_selected = 3;
 
 $(document).ready(function() {
   $('#clock').simpleClock();
-	$.mobile.selectmenu.prototype.options.nativeMenu = false;
-	
-	
-/*	$('#add-item').bind('click', function(event) {
-     $('#select-choice-1').append('<option value="added">Added !</option>');
-		$('#select-choice-1').selectmenu('refresh', true);
-   });*/
-
-
 });
 
 
@@ -26,35 +17,28 @@ $(function() {
 var timecaptain = {}
 timecaptain.init = {}
 timecaptain.init.db = {}
-
 	$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 99" data-direction="up" ></span>').trigger('create');
 	$('.counter').counter();
-	
 	$('#start_stop_button').on('click',function(){
-
-		if($displayStartTime == 0) {
-				
-			$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 59" data-direction="up" ></span>').trigger('create');
-			$('.counter').counter();
-			$currTime = new Date();
-			$displayStartTime = $currTime.getTime();
-
-			$("#start_stop_button .ui-btn-text").text('Stop');
-
-		} else {
-			$currTime = new Date();
-			$displayStopTime = $currTime.getTime();
-
-			//var $Test_Customer = 44;
-			//var $Test_Project = 55;
-			//var $Test_Function = 66;
-			timecaptain.init.addTodo($displayStartTime, $displayStopTime);
-			
-			$("#start_stop_button .ui-btn-text").text('Start');
-
-			$displayStartTime = 0;
-		}
-		
+		if ($temp_customer_selected == 0) {alert('Bitte wählen Sie einen Kunden aus.');}
+		else if ($temp_project_selected == 0) {alert('Bitte wählen Sie ein Projekt aus.');}		
+		else if ($temp_activity_selected == 0) {alert('Bitte wählen Sie eine Tätigkeit aus.');} else {
+			if($displayStartTime == 0) {
+				$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 59" data-direction="up" ></span>').trigger('create');
+				$('.counter').counter();
+				$currTime = new Date();
+				$displayStartTime = $currTime.getTime();
+				$("#start_stop_button .ui-btn-text").html('<br>Stop<br><br>');
+				//$('#start_stop_button').attr('data-theme', 'b').removeClass('ui-body-a').addClass('ui-body-b').trigger('create');
+			} else {
+				$currTime = new Date();
+				$displayStopTime = $currTime.getTime();
+				timecaptain.init.addTodo($displayStartTime, $displayStopTime);
+				$("#start_stop_button .ui-btn-text").html('<br>Start<br><br>');
+				//$('#start_stop_button').attr('data-theme', 'a').removeClass('ui-body-b').addClass('ui-body-a').trigger('create');
+				$displayStartTime = 0;
+			}	
+		}			
 	});
 
 
@@ -146,7 +130,7 @@ timecaptain.init.db = {}
 	timecaptain.init.addTodo = function(temp_start_time, temp_stop_time){
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
-			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,function) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_function_selected],
+			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_activity_selected],
 			 //showAllTodo(temp_start_time, temp_stop_time)
 			 timecaptain.init.getAllRecords()
 			
@@ -164,11 +148,10 @@ timecaptain.init.db = {}
 	
 	// getting alle Records from the Database
 	timecaptain.init.getAllRecords = function(){
-		$('ul.list').html('');
+		$('ul.show_all_records').html('');
 		var database = timecaptain.init.db;
 		database.transaction(function(tx){
 			tx.executeSql("SELECT * FROM records", [], function(tx,result){
-
 				for (var i=0; i < result.rows.length; i++) {
 					
 					temp_id = result.rows.item(i).ID;
@@ -176,19 +159,45 @@ timecaptain.init.db = {}
 					temp_stop_time = result.rows.item(i).stop_time;
 					temp_customer = result.rows.item(i).customer;
 					temp_project = result.rows.item(i).project;
-					temp_function = result.rows.item(i).function;
-					$('ul.list').append(
-						'<li>ID: ' + temp_id + '</span>' +
-						'Start: ' + temp_start_time + ' ' +
-						'Stop: ' + temp_stop_time + ' ' +
+					temp_activity = result.rows.item(i).activity;
+					
+					var StartTime = new Date(temp_start_time);
+					var temp_view_start_month = StartTime.getMonth() + 1;
+					var temp_view_start_day = StartTime.getDate();
+					var temp_view_start_year = StartTime.getFullYear();
+					var temp_view_start_hours = StartTime.getHours() + 1;
+					var temp_view_start_minutes = StartTime.getMinutes();
+					var temp_view_start_seconds = StartTime.getSeconds();
+					temp_view_start_time = temp_view_start_month + '.' + temp_view_start_day + '.' + temp_view_start_year + '&nbsp;' + temp_view_start_hours + ':' + temp_view_start_minutes + ':' + temp_view_start_seconds + ' Uhr';
+
+					var StopTime = new Date(temp_stop_time);
+					var temp_view_stop_month = StopTime.getMonth() + 1;
+					var temp_view_stop_day = StopTime.getDate();
+					var temp_view_stop_year = StopTime.getFullYear();
+					var temp_view_stop_hours = StopTime.getHours() + 1;
+					var temp_view_stop_minutes = StopTime.getMinutes();
+					var temp_view_stop_seconds = StopTime.getSeconds();
+					temp_view_stop_time = temp_view_stop_month + '.' + temp_view_stop_day + '.' + temp_view_stop_year + '&nbsp;' + temp_view_stop_hours + ':' + temp_view_stop_minutes + ':' + temp_view_stop_seconds + ' Uhr';
+	
+
+					$('ul.show_all_records').append(
+						'<li>' +
+						'Start: ' + temp_view_start_time + ' ' +
+						'Stop: ' + temp_view_stop_time + '<br>' +
 						'Kunde: ' + temp_customer + ' ' +
 						'Projekt: ' + temp_project + ' ' +
-						'Tärtigkeit: ' + temp_function + ' ' +
-						'<a href="#" id="delete"> Delete </a>' +
-						'<input id="this_id" value="' + temp_id + '" type="hidden"></li>'); 
+						'Tätigkeit: ' + temp_activity + ' ' +
+						'</li>'); 
+
+						//'<a href="#" id="delete"> Delete </a>' +
+						//'<input id="this_id" value="' + temp_id + '" type="hidden"></li>');
+						
 				}
 			});
 		});
+		//$('#page_2').trigger('create');
+		
+		$('#page_2').page('refresh');
 	}
 	
 	
@@ -306,8 +315,8 @@ timecaptain.init.db = {}
 		    $temp_project_selected = $(this).val();
 		});
 
-		$("#select-function").change(function() {
-		    $temp_function_selected = $(this).val();
+		$("#select-activity").change(function() {
+		    $temp_activity_selected = $(this).val();
 		});
 		
 });
