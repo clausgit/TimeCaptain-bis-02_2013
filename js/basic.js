@@ -9,7 +9,17 @@ var $temp_function_selected = 0;
 $(document).ready(function() {
   $('#clock').simpleClock();
 	$.mobile.selectmenu.prototype.options.nativeMenu = false;
+	
+	
+/*	$('#add-item').bind('click', function(event) {
+     $('#select-choice-1').append('<option value="added">Added !</option>');
+		$('#select-choice-1').selectmenu('refresh', true);
+   });*/
+
+
 });
+
+
 
 	
 $(function() {
@@ -60,15 +70,78 @@ timecaptain.init.db = {}
 		database.transaction(function(tx){
 			//tx.executeSql("CREATE TABLE IF NOT EXISTS todo (ID INTEGER PRIMARY KEY ASC,todo_item TEXT,due_date VARCHAR)", []);
 			
-			tx.executeSql("CREATE TABLE IF NOT EXISTS records (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, start_time INTEGER, stop_time INT, customer INTEGER, project INTEGER, function INTEGER)", []);
-			tx.executeSql("CREATE TABLE IF NOT EXISTS customer (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customer_name VARCHAR, customer_projects VARCHAR)", []);
+			tx.executeSql("CREATE TABLE IF NOT EXISTS records (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, start_time INTEGER, stop_time INT, customer INTEGER, project INTEGER, activity INTEGER)", []);
+			tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customer_name VARCHAR, customer_projects VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS projects (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, project_name VARCHAR)", []);
-			tx.executeSql("CREATE TABLE IF NOT EXISTS functions (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, function_name VARCHAR, function_rate INTEGER)", []);
+			tx.executeSql("CREATE TABLE IF NOT EXISTS activities (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, activity_name VARCHAR, activity_rate INTEGER)", []);
+			
+			tx.executeSql("DELETE FROM customers", []);
+			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Stadtwerke Köln')", []);
+			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Aachener Versicherungen')", []);
+			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Freiburger Bauamt')", []);
+			
+			tx.executeSql("DELETE FROM projects", []);
+			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Flyer Wasserwirtschaft')", []);
+			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Produktkatalog 2013')", []);
+			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Image-Broschüre')", []);
+			
+			tx.executeSql("DELETE FROM activities", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Programmieren')", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Layout')", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Konzept')", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Meeting')", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Backup')", []);
+			tx.executeSql("INSERT INTO activities (activity_name) VALUES ('Support')", []);
+			
+		});
+	}
+	
+	//Das Kunden-Menu wird gebaut
+	timecaptain.init.buildCustomerMenu = function(){
+		var database = timecaptain.init.db;
+		database.transaction(function(tx){
+			tx.executeSql("SELECT * FROM customers", [], function(tx,result){
+				for (var i=0; i < result.rows.length; i++) {
+					temp_id = result.rows.item(i).ID;
+					temp_customer_name = result.rows.item(i).customer_name;			
+					$('#select-customer').append('<option value="' + temp_id + '">' + temp_customer_name + '</option>');
+				}
+				$('#select-customer').selectmenu('refresh', true);
+			});
+		});
+	}
+	
+	//Das Projekte-Menu wird gebaut
+	timecaptain.init.buildProjectMenu = function(){
+		var database = timecaptain.init.db;
+		database.transaction(function(tx){
+			tx.executeSql("SELECT * FROM projects", [], function(tx,result){
+				for (var i=0; i < result.rows.length; i++) {
+					temp_id = result.rows.item(i).ID;
+					temp_project_name = result.rows.item(i).project_name;			
+					$('#select-project').append('<option value="' + temp_id + '">' + temp_project_name + '</option>');
+				}
+				$('#select-project').selectmenu('refresh', true);
+			});
+		});
+	}
+	
+	//Das Tätigkeiten-Menu wird gebaut
+	timecaptain.init.buildActivityMenu = function(){
+		var database = timecaptain.init.db;
+		database.transaction(function(tx){
+			tx.executeSql("SELECT * FROM activities", [], function(tx,result){
+				for (var i=0; i < result.rows.length; i++) {
+					temp_id = result.rows.item(i).ID;
+					temp_activity_name = result.rows.item(i).activity_name;			
+					$('#select-activity').append('<option value="' + temp_id + '">' + temp_activity_name + '</option>');
+				}
+				$('#select-activity').selectmenu('refresh', true);
+			});
 		});
 	}
 
-	// adding created todo
-	// adding created todo
+	// adding record
 	// $displayStartTime, $displayStopTime, $Test_Customer, $Test_Project, $Test_Function
 	timecaptain.init.addTodo = function(temp_start_time, temp_stop_time){
 		var database = timecaptain.init.db;
@@ -113,16 +186,26 @@ timecaptain.init.db = {}
 						'Tärtigkeit: ' + temp_function + ' ' +
 						'<a href="#" id="delete"> Delete </a>' +
 						'<input id="this_id" value="' + temp_id + '" type="hidden"></li>'); 
-						$('li:last').addClass('highlight').delay(1000).queue(function(next){ $(this).removeClass('highlight'); next(); });
 				}
 			});
 		});
 	}
 	
 	
+	// onClick deleteEvent Handler
+	$('#delete').live("click",function(){
+		var id = $(this).closest('li').find('#this_id').val();
+		timecaptain.init.deleteRecord(id);
+		timecaptain.init.getAllRecords()
+	});
 	
-	
-	
+	// deleting a record 
+	timecaptain.init.deleteRecord = function(id){
+		var database = timecaptain.init.db;
+		database.transaction(function(tx){
+			tx.executeSql("DELETE FROM records WHERE ID=?",[id]);
+		});
+	}
 	
 	
 	
@@ -143,15 +226,11 @@ timecaptain.init.db = {}
 		});
 	}
 
-	// deleting a todo 
-	timecaptain.init.deleteRecord = function(id){
-		var database = timecaptain.init.db;
-		database.transaction(function(tx){
-			tx.executeSql("DELETE FROM todo WHERE ID=?",[id]);
-		});
-	}
 
 
+
+	
+	
 	// deleting all records
 	
 	timecaptain.init.deleteAllRecords = function(){
@@ -164,7 +243,7 @@ timecaptain.init.db = {}
 	
 	$('#delete_all_button').on('click',function(){
 		timecaptain.init.deleteAllRecords();	
-		timecaptain.init.getAllRecords()
+		timecaptain.init.getAllRecords();
 	});
 	
 	
@@ -197,19 +276,16 @@ timecaptain.init.db = {}
 		$('li:last').addClass('highlight').delay(1000).queue(function(next){ $(this).removeClass('highlight'); next(); });
 	}
 	
-	// onClick deleteEvent Handler
 
-	$('#delete').live("click",function(){
-		var id = $(this).closest('li').find('#this_id').val();
-		$(this).closest('li').addClass('highlight').delay(1000).queue(function(next){ $(this).remove(); next(); });
-		timecaptain.init.deleteTodo(id);
-	});
 
 	function init(){
 		if(typeof(openDatabase) !== 'undefined')
 		{
 			timecaptain.init.open();
 			timecaptain.init.createTable();
+			timecaptain.init.buildCustomerMenu();
+			timecaptain.init.buildProjectMenu();
+			timecaptain.init.buildActivityMenu();
 			timecaptain.init.getTodo();
 			timecaptain.init.getAllRecords();
 		}
@@ -218,9 +294,10 @@ timecaptain.init.db = {}
 			$('#bodyWrapper').html('<h2 class="error_message"> Your browser does not support webSql </h2>');
 		}
 	}
+	
 		init();
 
-
+		// Auswahl der Listen Kunde, Projekt und Tätigkeit
 		$("#select-customer").change(function() {
 		    $temp_customer_selected = $(this).val();
 		});
