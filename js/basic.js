@@ -66,7 +66,8 @@ timecaptain.init.db = {}
 			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Stadtwerke Köln')", []);
 			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Aachener Versicherungen')", []);
 			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Freiburger Bauamt')", []);
-			
+			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Erdinger Weissbier')", []);
+						
 			tx.executeSql("DELETE FROM projects", []);
 			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Flyer Wasserwirtschaft')", []);
 			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Produktkatalog 2013')", []);
@@ -183,14 +184,14 @@ timecaptain.init.db = {}
 					var temp_view_stop_seconds = StopTime.getSeconds();
 					temp_view_stop_time = temp_view_stop_month + '.' + temp_view_stop_day + '.' + temp_view_stop_year + '&nbsp;' + temp_view_stop_hours + ':' + temp_view_stop_minutes + ':' + temp_view_stop_seconds + ' Uhr';
 	
-	
-
-	
+					
+					temp_customer_name_list_view = getCustomerName(temp_customer);
+					
 					$('#list_off_all_records').append(
 						'<li>' +
 						'Start: ' + temp_view_start_time + ' ' +
 						'Stop: ' + temp_view_stop_time + '<br>' +
-						'Kunde: ' + temp_customer + ' ' +
+						'Kunde: ' + temp_customer_name_list_view + ' ' + temp_customer + ' ' +
 						'Projekt: ' + temp_project + ' ' +
 						'Tätigkeit: ' + temp_activity + ' ' +
 						'</li>');
@@ -204,7 +205,18 @@ timecaptain.init.db = {}
 			});
 		});
 		
-		
+		// get customer name
+		timecaptain.init.getCustomerName = function(id){
+			var database = timecaptain.init.db;
+			database.transaction(function(tx){			
+				tx.executeSql("SELECT * FROM customers WHERE ID=?", [id], function(tx,result){
+					for (var i=0; i < result.rows.length; i++) {
+						temp_customer_name_list_view = result.rows.item(i).customer_name;
+					}
+				});
+			});
+			return temp_customer_name_list_view;
+		}
 		
 		//$('#list_off_all_records').trigger('create');
 		
