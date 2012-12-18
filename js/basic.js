@@ -5,20 +5,23 @@ var $displayStopTime = 0;
 var $temp_customer_selected = 33;
 var $temp_project_selected = 44;
 var $temp_activity_selected = 55;
+var $temp_customer_name_list_view = 'Uuuuuuuu';
 
 $(document).ready(function() {
   $('#clock').simpleClock();
-});
+//});
 
 
 
 	
-$(function() {
+//$(function() {
 var timecaptain = {}
 timecaptain.init = {}
 timecaptain.init.db = {}
+
 	$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 99" data-direction="up" ></span>').trigger('create');
 	$('.counter').counter();
+	
 	$('#start_stop_button').on('click',function(){
 		if ($temp_customer_selected == 0) {alert('Bitte wählen Sie einen Kunden aus.');}
 		else if ($temp_project_selected == 0) {alert('Bitte wählen Sie ein Projekt aus.');}		
@@ -56,17 +59,20 @@ timecaptain.init.db = {}
 			//tx.executeSql("CREATE TABLE IF NOT EXISTS todo (ID INTEGER PRIMARY KEY ASC,todo_item TEXT,due_date VARCHAR)", []);
 			
 			tx.executeSql("CREATE TABLE IF NOT EXISTS records (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, start_time INTEGER, stop_time INT, customer INTEGER, project INTEGER, activity INTEGER)", []);
-			tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customer_name VARCHAR, customer_projects VARCHAR)", []);
+
+			//tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, customer_name VARCHAR, customer_projects VARCHAR)", []);
+			tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER, customer_name VARCHAR, customer_projects VARCHAR)", []);
+
 			tx.executeSql("CREATE TABLE IF NOT EXISTS projects (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, project_name VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS activities (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, activity_name VARCHAR, activity_rate INTEGER)", []);
 			
 			//tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES ('55','66','77','88','99')", []);
 			
 			tx.executeSql("DELETE FROM customers", []);
-			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Stadtwerke Köln')", []);
-			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Aachener Versicherungen')", []);
-			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Freiburger Bauamt')", []);
-			tx.executeSql("INSERT INTO customers (customer_name) VALUES ('Erdinger Weissbier')", []);
+			tx.executeSql("INSERT INTO customers (ID,customer_name) VALUES (1,'Stadtwerke Köln')", []);
+			tx.executeSql("INSERT INTO customers (ID,customer_name) VALUES (2,'Aachener Versicherungen')", []);
+			tx.executeSql("INSERT INTO customers (ID,customer_name) VALUES (3,'Freiburger Bauamt')", []);
+			tx.executeSql("INSERT INTO customers (ID,customer_name) VALUES (4,'Erdinger Brauerei')", []);
 						
 			tx.executeSql("DELETE FROM projects", []);
 			tx.executeSql("INSERT INTO projects (project_name) VALUES ('Flyer Wasserwirtschaft')", []);
@@ -157,6 +163,7 @@ timecaptain.init.db = {}
 		
 		database.transaction(function(tx){
 			tx.executeSql("SELECT * FROM records", [], function(tx,result){
+				//alert(result.rows.length);
 				for (var i=0; i < result.rows.length; i++) {
 					
 					temp_id = result.rows.item(i).ID;
@@ -183,47 +190,62 @@ timecaptain.init.db = {}
 					var temp_view_stop_minutes = StopTime.getMinutes();
 					var temp_view_stop_seconds = StopTime.getSeconds();
 					temp_view_stop_time = temp_view_stop_month + '.' + temp_view_stop_day + '.' + temp_view_stop_year + '&nbsp;' + temp_view_stop_hours + ':' + temp_view_stop_minutes + ':' + temp_view_stop_seconds + ' Uhr';
-	
 					
-					temp_customer_name_list_view = getCustomerName(temp_customer);
+					//var temp_customer_name_list_view = 'wergwdg';	
+					//$temp_customer_name_list_view = 'DDDDDDDD';			
+					//$temp_customer_name_list_view = timecaptain.init.getCustomerName(temp_customer);
+
+
+					
+					var databasetwo = timecaptain.init.db;
+					databasetwo.transaction(function(tx){
+						tx.executeSql("SELECT * FROM customers WHERE ID=?", [temp_customer], function(tx,result){
+								$temp_customer_name_list_view = result.rows.item(0).customer_name;			
+						});
+					});
+					
+					
+					//alert($temp_customer_name_list_view);
+					
+					
+					
+					
+
 					
 					$('#list_off_all_records').append(
 						'<li>' +
 						'Start: ' + temp_view_start_time + ' ' +
 						'Stop: ' + temp_view_stop_time + '<br>' +
-						'Kunde: ' + temp_customer_name_list_view + ' ' + temp_customer + ' ' +
+						'Kunde: ' + $temp_customer_name_list_view  + ' ' +
 						'Projekt: ' + temp_project + ' ' +
 						'Tätigkeit: ' + temp_activity + ' ' +
 						'</li>');
 
-						//'<a href="#" id="delete"> Delete </a>' +
-						//'<input id="this_id" value="' + temp_id + '" type="hidden"></li>');
 					$('#list_off_all_records').listview('refresh');	
+					temp_customer_name_list_view = '';
 				}
-				
-				
 			});
 		});
-		
-		// get customer name
-		timecaptain.init.getCustomerName = function(id){
-			var database = timecaptain.init.db;
-			database.transaction(function(tx){			
-				tx.executeSql("SELECT * FROM customers WHERE ID=?", [id], function(tx,result){
-					for (var i=0; i < result.rows.length; i++) {
-						temp_customer_name_list_view = result.rows.item(i).customer_name;
-					}
-				});
-			});
-			return temp_customer_name_list_view;
-		}
-		
-		//$('#list_off_all_records').trigger('create');
-		
-		//$('#page_2').page('refresh');
 	}
+
+
 	
+		
+	/*get customer name
+	timecaptain.init.getCustomerName = function(id){
+		var databasetwo = timecaptain.init.db;
+		databasetwo.transaction(function(tx){
+			tx.executeSql("SELECT * FROM customers WHERE ID=?", [id], function(tx,result){
+				for (var k=0; k < result.rows.length; k++) {
+					var return_customer_name = result.rows.item(k).customer_name;
+					return return_customer_name;
+				}
+			});
+		});
+	}*/
 	
+
+		
 	// onClick deleteEvent Handler
 	$('#delete').live("click",function(){
 		var id = $(this).closest('li').find('#this_id').val();
@@ -320,6 +342,7 @@ timecaptain.init.db = {}
 			timecaptain.init.buildActivityMenu();
 			timecaptain.init.getTodo();
 			timecaptain.init.getAllRecords();
+
 		}
 		else
 		{
