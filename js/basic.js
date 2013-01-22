@@ -368,7 +368,11 @@ timecaptain.init.db = {}
 });
 
 
-
+$( '#page_2' ).live( 'pagebeforeshow',function(event, ui){	
+	//alert('Hallo');
+	$('a[href=#page_2]').unbind();
+	//timecaptain.init.getAllRecords(); 
+});
 
 
 
