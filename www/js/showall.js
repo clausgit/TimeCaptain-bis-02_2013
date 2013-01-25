@@ -2,7 +2,7 @@
 var $temp_message = '';
 
 
-	global_timecaptain.tools.getAllRecords = function($temp_message){
+global_timecaptain.tools.getAllRecords = function($temp_message){
 
 		alert($temp_message);
 			
@@ -25,7 +25,7 @@ var $temp_message = '';
 					var temp_project = result.rows.item(i).project;
 					var temp_activity = result.rows.item(i).activity;
 					
-					alert('Customer ID: ' + temp_customer)
+					//alert('Customer ID: ' + temp_customer)
 					
 					/*var StartTime = new Date(temp_start_time);
 					var temp_view_start_month = StartTime.getMonth() + 1;
@@ -53,33 +53,41 @@ var $temp_message = '';
 					//$temp_customer_name_list_view = 'DDDDDDDD';			
 					//$temp_customer_name_list_view = global_timecaptain.init.getCustomerName(temp_customer);
 					
-					var temp_customer_name_list_view = '';		
-					
-					var databasetwo = global_timecaptain.init.db;
-					
 					//alert(i + ' ' + temp_customer);	
+					
+					//function getCustomerName() {
 						
-						databasetwo.transaction(function(tx){
-							tx.executeSql("SELECT * FROM customers WHERE ID=?", [temp_customer], function(tx,result){
-									temp_customer_name_list_view = result.rows.item(0).customer_name;	
-									alert('Kundenname: ' + temp_customer_name_list_view);		
-							});
-						});
-
+						
+						var temp_customer_name_list_view = '';		
+						var databasetwo = global_timecaptain.init.db;
+						//alert(i + ' ' + temp_customer);	
+						databasetwo.transaction(getCustomerName(temp_customer));
+						
+						alert('KJHHKJHKJHKJHKJJKH');
+						
+					//}
 					
 					//$temp_customer_name_list_view = 'Aachener';
 					
-
-					/*$('#list_off_all_records').append(
-						'<li>' +
-						'Start: ' + temp_view_start_time + ' ' +
-						'Stop: ' + temp_view_stop_time + '<br>' +
-						'Kunde: ' + $temp_customer_name_list_view  + ' ' +
-						'Projekt: ' + temp_project + ' ' +
-						'Tätigkeit: ' + temp_activity + ' ' +
-						'</li>');*/
+					
+					//$.when( { testing: 123 } ).done(
+					//    function() { alert('FJZJGKKHKJHK'); } /* alerts "123" */
+					//    );
+					
+					//$.when(getCustomerName()).then(alert(i + ' ' + temp_customer_name_list_view));
 						
-					alert(i + ' ' + temp_customer);
+						/*$('#list_off_all_records').append(
+							'<li>' +
+							'Start: ' + temp_view_start_time + ' ' +
+							'Stop: ' + temp_view_stop_time + '<br>' +
+							'Kunde: ' + $temp_customer_name_list_view  + ' ' +
+							'Projekt: ' + temp_project + ' ' +
+							'Tätigkeit: ' + temp_activity + ' ' +
+							'</li>');*/
+					
+
+						
+					
 					
 					$('#list_off_all_records').delay(0).listview('refresh');	
 					//$('#list_off_all_records').trigger('create');
@@ -87,7 +95,37 @@ var $temp_message = '';
 					//temp_customer_name_list_view = '';
 					
 				}
+				
+				
+				function getCustomerName(val) {
+					//alert('HALLOOOOOOO');
+				        return function(tx) {
+				            tx.executeSql("SELECT * FROM customers WHERE ID=?", [val], function(tx,result){
+									temp_customer_name_list_view = result.rows.item(0).customer_name;	
+									alert('Kundenname: ' + temp_customer_name_list_view);		
+							});
+				        };
+				}
+	
+				
+				
+				
 			});
 		});
 	}
 // FUNCTION GET ALL RECORDS END ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

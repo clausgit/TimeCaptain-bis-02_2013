@@ -2,9 +2,15 @@ var $currTime = 0;
 var $displayStartTime = 0;
 var $displayStopTime = 0;
 
-var $temp_customer_selected = 1;
-var $temp_project_selected = 1;
-var $temp_activity_selected = 1;
+var $temp_customer_selected_id = 1;
+var $temp_customer_selected_name = 'Kunde';
+
+var $temp_project_selected_id = 1;
+var $temp_project_selected_name = 'Projekt';
+
+var $temp_activity_selected_id = 1;
+var $temp_activity_selected_name = 'Tätigkeit';
+
 var $temp_customer_name_list_view = '';
 
 $(document).ready(function() {
@@ -20,9 +26,9 @@ $(document).ready(function() {
 	$('.counter').counter();
 	
 	$('#start_stop_button').on('click',function(){
-		if ($temp_customer_selected == 0) {alert('Bitte wählen Sie einen Kunden aus.');}
-		else if ($temp_project_selected == 0) {alert('Bitte wählen Sie ein Projekt aus.');}		
-		else if ($temp_activity_selected == 0) {alert('Bitte wählen Sie eine Tätigkeit aus.');} else {
+		if ($temp_customer_selected_id == 0) {alert('Bitte wählen Sie einen Kunden aus.');}
+		else if ($temp_project_selected_id == 0) {alert('Bitte wählen Sie ein Projekt aus.');}		
+		else if ($temp_activity_selected_id == 0) {alert('Bitte wählen Sie eine Tätigkeit aus.');} else {
 			if($displayStartTime == 0) {
 				$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 59" data-direction="up" ></span>').trigger('create');
 				$('.counter').counter();
@@ -58,9 +64,49 @@ $(document).ready(function() {
 	});
 
 	// Auswahl der Listen Kunde, Projekt und Tätigkeit
-	$("#select-customer").change(function() {$temp_customer_selected = $(this).val();});
-	$("#select-project").change(function() {$temp_project_selected = $(this).val();});
-	$("#select-activity").change(function() {$temp_activity_selected = $(this).val();});
+	$("#select-customer").change(function() {
+		$temp_customer_selected_id = $(this).val();
+
+		var database_customer_name = global_timecaptain.init.db;
+		database_customer_name.transaction(function(tx){
+			tx.executeSql("SELECT * FROM customers WHERE ID=?", [$temp_customer_selected_id], function(tx,result){
+				$temp_customer_selected_name = result.rows.item(0).customer_name;	
+						alert($temp_customer_selected_name);
+			});
+		});
+		
+		});
+		
+		
+		
+	$("#select-project").change(function() {
+		$temp_project_selected_id = $(this).val();
+		
+		var database_project_name = global_timecaptain.init.db;
+		database_project_name.transaction(function(tx){
+			tx.executeSql("SELECT * FROM projects WHERE ID=?", [$temp_project_selected_id], function(tx,result){
+				$temp_project_selected_name = result.rows.item(0).project_name;	
+						alert($temp_project_selected_name);
+			});
+		});
+		
+		});
+		
+		
+		
+		
+	$("#select-activity").change(function() {
+		$temp_activity_selected_id = $(this).val();
+		
+		var database_activity_name = global_timecaptain.init.db;
+		database_activity_name.transaction(function(tx){
+			tx.executeSql("SELECT * FROM activities WHERE ID=?", [$temp_activity_selected_id], function(tx,result){
+				$temp_activity_selected_name = result.rows.item(0).activity_name;	
+						alert($temp_activity_selected_name);
+			});
+		});
+		
+		});
 		
 });
 

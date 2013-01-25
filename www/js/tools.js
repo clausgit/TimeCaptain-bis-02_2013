@@ -34,7 +34,7 @@ global_timecaptain.tools = {}
 		//alert('addRecord');
 		var database = global_timecaptain.init.db;
 		database.transaction(function(tx){
-			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES (?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected,$temp_project_selected,$temp_activity_selected]);
+			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,customer_name,project,project_name,activity,activity_name) VALUES (?,?,?,?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected_id,$temp_customer_selected_name,$temp_project_selected_id,$temp_project_selected_name,$temp_activity_selected_id,$temp_activity_selected_name]);
 			//tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES ('55','66','77','88','99')", []);
 			
 			 //global_timecaptain.tools.getAllRecords();
