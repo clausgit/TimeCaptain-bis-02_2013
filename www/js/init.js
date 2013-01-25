@@ -25,10 +25,6 @@ global_timecaptain.init.db = {}
 		var database = global_timecaptain.init.db;
 		database.transaction(function(tx){			
 			tx.executeSql("CREATE TABLE IF NOT EXISTS records (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, start_time INTEGER, stop_time INT, customer INTEGER, customer_name VARCHAR, project INTEGER, project_name VARCHAR, activity INTEGER, activity_name VARCHAR)", []);
-			
-			
-			
-			
 			tx.executeSql("CREATE TABLE IF NOT EXISTS customers (ID INTEGER, customer_name VARCHAR, customer_projects VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS projects (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, project_name VARCHAR)", []);
 			tx.executeSql("CREATE TABLE IF NOT EXISTS activities (ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, activity_name VARCHAR, activity_rate INTEGER)", []);

@@ -12,19 +12,43 @@ global_timecaptain.tools = {}
 
 
 	
-		
-	/*get customer name
-	global_timecaptain.tools.getCustomerName = function(id){
-		var databasetwo = global_timecaptain.init.db;
-		databasetwo.transaction(function(tx){
-			tx.executeSql("SELECT * FROM customers WHERE ID=?", [id], function(tx,result){
-				for (var k=0; k < result.rows.length; k++) {
-					var return_customer_name = result.rows.item(k).customer_name;
-					return return_customer_name;
-				}
-			});
+// FUNCTION GET AND SHOW ALL RECORDS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// get all records from the database and bulid the listview	
+//var $temp_message = '';
+global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
+	$('#list_off_all_records').html('');
+	//alert($temp_message);
+	var database = global_timecaptain.init.db;	
+	database.transaction(function(tx){
+		tx.executeSql("SELECT * FROM records", [], function(tx,result){
+			//alert('Anzahl: ' + result.rows.length);
+			for (var i=0; i < result.rows.length; i++) {							
+				var temp_id = result.rows.item(i).ID;
+				var temp_start_time = result.rows.item(i).start_time;
+				var temp_stop_time = result.rows.item(i).stop_time;
+				var temp_customer = result.rows.item(i).customer;
+				var temp_customer_name = result.rows.item(i).customer_name;
+				var temp_project = result.rows.item(i).project;
+				var temp_project_name = result.rows.item(i).project_name;
+				var temp_activity = result.rows.item(i).activity;
+				var temp_activity_name = result.rows.item(i).activity_name;
+				
+				temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time);
+				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time);
+				//alert(temp_id);
+				$('#list_off_all_records').append(
+					'<li><a style="font-size: 12px !important; font-weight: normal !important;" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_3" data-single_view_id="' + temp_id + '">' +
+					'<b>Start:</b> ' + temp_view_start_time + ' ' +
+					'<b>Stop:</b> ' + temp_view_stop_time + '<br>' +
+					'<b>Kunde:</b> ' + temp_customer_name  + ' ' +
+					'<b>Projekt:</b> ' + temp_project_name + '<br> ' +
+					//'Tätigkeit: ' + temp_activity_name + ' ' +
+					'</a></li>');	
+			}
+			$('#list_off_all_records').listview('refresh');
 		});
-	}*/
+	});
+}
 	
 
 // FUNCTION ADD RECORD /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,9 +60,23 @@ global_timecaptain.tools = {}
 		database.transaction(function(tx){
 			 tx.executeSql("INSERT INTO records (start_time,stop_time,customer,customer_name,project,project_name,activity,activity_name) VALUES (?,?,?,?,?,?,?,?)", [temp_start_time,temp_stop_time,$temp_customer_selected_id,$temp_customer_selected_name,$temp_project_selected_id,$temp_project_selected_name,$temp_activity_selected_id,$temp_activity_selected_name]);
 			//tx.executeSql("INSERT INTO records (start_time,stop_time,customer,project,activity) VALUES ('55','66','77','88','99')", []);
-			
-			 //global_timecaptain.tools.getAllRecords();
+			//alert('addRecord');
 		});
+		
+		
+		/*var temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time);
+		var temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time);
+		
+		 	$('#list_off_all_records').append(
+				'<li><a data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_2" data-single_view_id="' + temp_id + '">' +
+				'Start: ' + temp_view_start_time + ' ' +
+				'Stop: ' + temp_view_stop_time + '<br>' +
+				'Kunde: ' + $temp_customer_selected_name  + ' ' +
+				'Projekt: ' + $temp_project_selected_name + ' ' +
+				'Tätigkeit: ' + $temp_activity_selected_name + ' ' +
+				'</a></li>');
+		$('#list_off_all_records').delay(0).listview('refresh');*/
+		
 	}
 // FUNCTION ADD RECORD END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -66,7 +104,130 @@ global_timecaptain.tools = {}
 		});
 	}
 // FUNCTION DELETE ALL RECORDS END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// FUNCTION GET TIME VIEWS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// generate a normal view of the time entries in seconds since 1070
+	global_timecaptain.tools.getTimeView = function(temp_time){					
+					var newTime = new Date(temp_time);
+					var temp_view_month = newTime.getMonth() + 1;
+					var temp_view_day = newTime.getDate();
+					var temp_view_year = newTime.getFullYear();
+					var temp_view_hours = newTime.getHours();
+					var temp_view_minutes = newTime.getMinutes();
+					var temp_view_seconds = newTime.getSeconds();
+					var temp_view_time = temp_view_day + '.' + temp_view_month + '.' + temp_view_year + '&nbsp;' + temp_view_hours + ':' + temp_view_minutes + ':' + temp_view_seconds + ' Uhr';					
+					return temp_view_time;
+	}
+// FUNCTION GET TIME VIEWS END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+// FUNCTION SHOW SINGLE RECORD /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show a single record
+global_timecaptain.tools.showSingleRecord = function(){
+
+	//alert('call showSingleRecord!!')
+	$('#single_view').html('');
 	
+	var database = global_timecaptain.init.db;
+	database.transaction(function(tx){
+		tx.executeSql("SELECT * FROM records WHERE id=?", [$globalSingleViewID], function(tx,result){
+			for (var i=0; i < result.rows.length; i++) {
+				var temp_id = result.rows.item(i).ID;
+				var temp_start_time = result.rows.item(i).start_time;
+				var temp_stop_time = result.rows.item(i).stop_time;
+				var temp_customer = result.rows.item(i).customer;
+				var temp_customer_name = result.rows.item(i).customer_name;
+				var temp_project = result.rows.item(i).project;
+				var temp_project_name = result.rows.item(i).project_name;
+				var temp_activity = result.rows.item(i).activity;
+				var temp_activity_name = result.rows.item(i).activity_name;
+				
+				temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time);
+				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time);
+				
+				$('#single_view').append(
+					'<div style="font-size: 20px;"><b>Start:</b> ' + temp_view_start_time + '<br>' +
+					'<b>Stop:</b> ' + temp_view_stop_time + '<br>' +
+					'<b>Kunde:</b> ' + temp_customer_name  + ' ' +
+					'<b>Projekt:</b> ' + temp_project_name + '</div>' +
+					'<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_4">Ändern</a>');
+					$('#single_view').trigger('create');
+			}
+		});
+			
+	});
+		
+		
+		
+		//$('#single_view').append('<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_4" data-edit_id="' + $globalSingleViewID + ' data-edit_name="' + temp_name +'">Ändern</a><br>');
+
+		//$('#single_view').append('<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_4">Ändern</a><br>');
+		//$('#single_view').trigger('create');
+
+		$('a[href=#page_4]').unbind();
+		$("a[href=#page_4]").bind("click", function(e) {	
+			//alert('call showEditRecord!!')
+			global_timecaptain.tools.showEditRecord(temp_name);              
+		});	
+	
+}
+// FUNCTION SHOW SINGLE RECORD END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+		
+
+/*global_timecaptain.tools.showEditRecord = function(temp_edit_name){
+
+	$('#edit_form').html('');
+	$('#edit_form').append(
+		'<input type="text" id="id" value="' + $globalSingleViewID + '"</>' +
+		'<input type="text" id="name" value="' + temp_edit_name + '"</>' +
+		'<input type="submit" id="save_record" value="Sichern" class="button"/>'
+	);
+
+	$('#save_record').unbind();
+	$('#save_record').bind("click", function(e) {
+		global_timecaptain.tools.saveRecord();
+		//alert('call saveRecord!!')
+		});
+	$('#edit_form').trigger('create');
+}*/
+
+
+/*global_timecaptain.tools.saveRecord = function(){
+	 
+	var temp_save_id = $('#id').val();
+	var temp_save_name = $('#name').val();
+
+	var database = timecaptain.init.db;	
+	database.transaction(function(tx){		
+
+		tx.executeSql("UPDATE customers set ID=?, customer_name=? where ID=?;", [ temp_save_id, temp_save_name, $globalSingleViewID ]);
+		
+		$globalSingleViewID = temp_save_id;
+		//alert($globalSingleViewID);
+	});*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // TOOL FUNCTIONS END //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

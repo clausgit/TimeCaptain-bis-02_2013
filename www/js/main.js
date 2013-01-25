@@ -4,14 +4,12 @@ var $displayStopTime = 0;
 
 var $temp_customer_selected_id = 1;
 var $temp_customer_selected_name = 'Kunde';
-
 var $temp_project_selected_id = 1;
 var $temp_project_selected_name = 'Projekt';
-
 var $temp_activity_selected_id = 1;
 var $temp_activity_selected_name = 'Tätigkeit';
 
-var $temp_customer_name_list_view = '';
+var $globalSingleViewID = 0;
 
 $(document).ready(function() {
 	global_timecaptain.init.open();
@@ -19,7 +17,11 @@ $(document).ready(function() {
 	global_timecaptain.init.buildCustomerMenu();
 	global_timecaptain.init.buildProjectMenu();
 	global_timecaptain.init.buildActivityMenu();
-	global_timecaptain.tools.getAllRecords('init');
+	global_timecaptain.tools.getAndShowAllRecords();
+	
+	$("a[href=#page_3]").live("click", function(e) {
+		$globalSingleViewID = $(this).data("single_view_id");   
+	});
 
 	$('#clock').simpleClock();
 	$('#counter').html('<span id="counter" class="counter counter-analog2" data-format="59 99" data-direction="up" ></span>').trigger('create');
@@ -44,7 +46,7 @@ $(document).ready(function() {
 				$("#start_stop_button .ui-btn-text").html('<br>Start<br><br>');
 				//$('#start_stop_button').attr('data-theme', 'a').removeClass('ui-body-b').addClass('ui-body-a').trigger('create');
 				$displayStartTime = 0;
-				global_timecaptain.tools.getAllRecords('record'); 
+				global_timecaptain.tools.getAndShowAllRecords(); 
 			}	
 		}			
 	});
@@ -71,7 +73,7 @@ $(document).ready(function() {
 		database_customer_name.transaction(function(tx){
 			tx.executeSql("SELECT * FROM customers WHERE ID=?", [$temp_customer_selected_id], function(tx,result){
 				$temp_customer_selected_name = result.rows.item(0).customer_name;	
-						alert($temp_customer_selected_name);
+						//alert($temp_customer_selected_name);
 			});
 		});
 		
@@ -86,7 +88,7 @@ $(document).ready(function() {
 		database_project_name.transaction(function(tx){
 			tx.executeSql("SELECT * FROM projects WHERE ID=?", [$temp_project_selected_id], function(tx,result){
 				$temp_project_selected_name = result.rows.item(0).project_name;	
-						alert($temp_project_selected_name);
+						//alert($temp_project_selected_name);
 			});
 		});
 		
@@ -102,7 +104,7 @@ $(document).ready(function() {
 		database_activity_name.transaction(function(tx){
 			tx.executeSql("SELECT * FROM activities WHERE ID=?", [$temp_activity_selected_id], function(tx,result){
 				$temp_activity_selected_name = result.rows.item(0).activity_name;	
-						alert($temp_activity_selected_name);
+						//alert($temp_activity_selected_name);
 			});
 		});
 		
@@ -111,11 +113,13 @@ $(document).ready(function() {
 });
 
 
-$( '#page_2' ).live( 'pagebeforeshow',function(event, ui){	
+$( '#page_3' ).live( 'pagebeforeshow',function(event, ui){	
 	//alert('Hallo');
-	$('a[href=#page_2]').unbind();
-	//global_timecaptain.tools.getAllRecords(); 
+	$('a[href=#page_3]').unbind();
+	$('a[href=#page_4]').unbind();
+	global_timecaptain.tools.showSingleRecord(); 
 });
+
 
 
 
