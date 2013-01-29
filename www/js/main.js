@@ -19,6 +19,27 @@ $(document).ready(function() {
 	global_timecaptain.init.buildActivityMenu();
 	global_timecaptain.tools.getAndShowAllRecords();
 	
+	/*$(function(){
+	    $('#demo').mobiscroll().time({
+	        theme: 'ios',
+	        lang: 'de',
+	        display: 'bubble',
+	        mode: 'scroller'
+	    });    
+	    $('#show').click(function(){
+	        $('#demo').mobiscroll('show'); 
+	        return false;
+	    });
+	    $('#clear').click(function () {
+	        $('#demo').val('');
+	        return false;
+	    });
+	});*/
+	
+
+	
+
+	
 	$("a[href=#page_3]").live("click", function(e) {
 		$globalSingleViewID = $(this).data("single_view_id");   
 	});
@@ -119,9 +140,6 @@ $( '#page_3' ).live( 'pagebeforeshow',function(event, ui){
 	$('a[href=#page_4]').unbind();
 	global_timecaptain.tools.showSingleRecord(); 
 });
-
-
-
 
 
 

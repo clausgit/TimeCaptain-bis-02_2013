@@ -33,8 +33,8 @@ global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
 				var temp_activity = result.rows.item(i).activity;
 				var temp_activity_name = result.rows.item(i).activity_name;
 				
-				temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time);
-				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time);
+				temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time,1);
+				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time,2);
 				//alert(temp_id);
 				$('#list_off_all_records').append(
 					'<li><a style="font-size: 12px !important; font-weight: normal !important;" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_3" data-single_view_id="' + temp_id + '">' +
@@ -108,7 +108,9 @@ global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
 
 // FUNCTION GET TIME VIEWS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // generate a normal view of the time entries in seconds since 1070
-	global_timecaptain.tools.getTimeView = function(temp_time){					
+	global_timecaptain.tools.getTimeView = function(temp_time,temp_time_day_flag){	
+
+									
 					var newTime = new Date(temp_time);
 					var temp_view_month = newTime.getMonth() + 1;
 					var temp_view_day = newTime.getDate();
@@ -116,8 +118,15 @@ global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
 					var temp_view_hours = newTime.getHours();
 					var temp_view_minutes = newTime.getMinutes();
 					var temp_view_seconds = newTime.getSeconds();
-					var temp_view_time = temp_view_day + '.' + temp_view_month + '.' + temp_view_year + '&nbsp;' + temp_view_hours + ':' + temp_view_minutes + ':' + temp_view_seconds + ' Uhr';					
-					return temp_view_time;
+
+					if (temp_time_day_flag == 1) {
+						var temp_view_time = temp_view_hours + ':' + temp_view_minutes;					
+						return temp_view_time;
+					} else {
+						var temp_view_day = temp_view_day + '.' + temp_view_month + '.' + temp_view_year;					
+						return temp_view_day;
+					}
+
 	}
 // FUNCTION GET TIME VIEWS END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,15 +155,37 @@ global_timecaptain.tools.showSingleRecord = function(){
 				var temp_activity = result.rows.item(i).activity;
 				var temp_activity_name = result.rows.item(i).activity_name;
 				
-				temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time);
-				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time);
-				
+				var temp_view_start_time = global_timecaptain.tools.getTimeView(temp_start_time,1);
+				var temp_view_start_day = global_timecaptain.tools.getTimeView(temp_stop_time,2);
+
+				var temp_view_stop_time = global_timecaptain.tools.getTimeView(1);
+				var temp_view_stop_day = global_timecaptain.tools.getTimeView(2);
+								
 				$('#single_view').append(
-					'<div style="font-size: 20px;"><b>Start:</b> ' + temp_view_start_time + '<br>' +
-					'<b>Stop:</b> ' + temp_view_stop_time + '<br>' +
+					'<div style="font-size: 20px;">' +
+					'<form id="start_stop_time">' +
+					'<table><tr>' +
+					'<td>Start:&nbsp;</td>' +
+					'<td><input type="text" name="start_time" style="width: 60px !important;" id="start_time" value="' + temp_view_start_time + '&nbsp;&nbsp;"/></td>' +
+					'<td><input type="text" name="start_day" style="width: 100px !important;" id="start_day"  value="' + temp_view_start_day + '"/></td>' +
+					'</tr></table>' +
+					
+					
+					
+					'</form>' +
+					//<b>Start:</b> ' + temp_view_start_time + '<br>' +
+					
+					//'<input name="demo" id="demo" class="i-txt" />' +
+					
+					//'<b>Stop:</b> ' + temp_view_stop_time + '<br>' +
 					'<b>Kunde:</b> ' + temp_customer_name  + ' ' +
 					'<b>Projekt:</b> ' + temp_project_name + '</div>' +
 					'<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_4">Ändern</a>');
+					
+					$(function(){$('#start_time').mobiscroll().time({theme: 'ios', lang: 'de', display: 'bubble', mode: 'scroller'});});
+					$(function(){$('#start_day').mobiscroll().date({theme: 'ios', lang: 'de', display: 'bubble', mode: 'scroller', dateOrder: 'DMM ddyy'});});
+					
+					
 					$('#single_view').trigger('create');
 			}
 		});
@@ -173,6 +204,11 @@ global_timecaptain.tools.showSingleRecord = function(){
 			//alert('call showEditRecord!!')
 			global_timecaptain.tools.showEditRecord(temp_name);              
 		});	
+		
+		
+
+ 
+ 
 	
 }
 // FUNCTION SHOW SINGLE RECORD END /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
