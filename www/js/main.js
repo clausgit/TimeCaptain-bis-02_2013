@@ -57,15 +57,17 @@ $(document).ready(function() {
 				$('.counter').counter();
 				$currTime = new Date();
 				$displayStartTime = $currTime.getTime();
-				$("#start_stop_button .ui-btn-text").html('<br>Stop<br><br>');
+				$("#start_stop_button .ui-btn-text").html('Stop');
 				//$('#start_stop_button').attr('data-theme', 'b').removeClass('ui-body-a').addClass('ui-body-b').trigger('create');
+				$('#start_stop_button').addClass('ui-btn-active').trigger('create');
+
 			} else {
 				$currTime = new Date();
 				$displayStopTime = $currTime.getTime();
 				global_timecaptain.tools.addRecord($displayStartTime, $displayStopTime);
 				
-				$("#start_stop_button .ui-btn-text").html('<br>Start<br><br>');
-				//$('#start_stop_button').attr('data-theme', 'a').removeClass('ui-body-b').addClass('ui-body-a').trigger('create');
+				$("#start_stop_button .ui-btn-text").html('Start');
+				$('#start_stop_button').removeClass('ui-btn-active').trigger('create');
 				$displayStartTime = 0;
 				global_timecaptain.tools.getAndShowAllRecords(); 
 			}	

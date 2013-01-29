@@ -37,7 +37,7 @@ global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
 				temp_view_stop_time = global_timecaptain.tools.getTimeView(temp_stop_time,2);
 				//alert(temp_id);
 				$('#list_off_all_records').append(
-					'<li><a style="font-size: 12px !important; font-weight: normal !important;" data-icon="arrow-r" data-iconpos="right" data-transition="flip" href="#page_3" data-single_view_id="' + temp_id + '">' +
+					'<li><a style="font-size: 12px !important; font-weight: normal !important;" data-icon="arrow-r" data-iconpos="right" data-transition="none" href="#page_3" data-single_view_id="' + temp_id + '">' +
 					'<b>Start:</b> ' + temp_view_start_time + ' ' +
 					'<b>Stop:</b> ' + temp_view_stop_time + '<br>' +
 					'<b>Kunde:</b> ' + temp_customer_name  + ' ' +
