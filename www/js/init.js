@@ -66,6 +66,16 @@ global_timecaptain.init.db = {}
 					$('#select-customer').append('<option value="' + temp_id + '">' + temp_customer_name + '</option>');
 				}
 				$('#select-customer').selectmenu('refresh', true);
+				
+				//$(function(){$('#select-customer_static').mobiscroll().select({theme: 'ios', display: 'bubble', mode: 'scroller', inputClass: 'i-txt', width: 200});});
+				
+				//$('#select-customer').trigger('create');
+				
+
+				
+				
+				//$(function(){$('#start_time').mobiscroll().time({theme: 'ios', lang: 'de', display: 'bubble', mode: 'scroller'});});
+				
 			});
 		});
 	}

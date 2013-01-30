@@ -19,27 +19,33 @@ $(document).ready(function() {
 	global_timecaptain.init.buildActivityMenu();
 	global_timecaptain.tools.getAndShowAllRecords();
 	
-	/*$(function(){
-	    $('#demo').mobiscroll().time({
-	        theme: 'ios',
-	        lang: 'de',
-	        display: 'bubble',
-	        mode: 'scroller'
-	    });    
-	    $('#show').click(function(){
-	        $('#demo').mobiscroll('show'); 
-	        return false;
-	    });
-	    $('#clear').click(function () {
-	        $('#demo').val('');
-	        return false;
-	    });
-	});*/
+	var str = "01.01.2010";
+	var dmy = str.split(".");
+	var day = dmy[0];
+	var month = dmy[1];
+	var year = dmy[2];
+	
+	var str = "11:59";
+	var mh = str.split(":");
+	var minutes = mh[1];
+	var hour = mh[0]  - 1;
+	
+	
+	
+	var d = Date.parse(year + '-' + month + '-' + day + 'T' + hour + ':' + minutes);
+	alert(d);
+
+	
+	alert(global_timecaptain.tools.getTimeView(d,2));
+	
+	//alert(' Minute: ' + minute + ' Stunde: ' + hour + ' Tag: ' + day + ' Monat: ' + month + ' Jahr :' + year)
+
+	//var d = new Date(dmy[2], dmy[1] - 1, dmy[0]);
 	
 
 	
-
 	
+
 	$("a[href=#page_3]").live("click", function(e) {
 		$globalSingleViewID = $(this).data("single_view_id");   
 	});
@@ -64,6 +70,8 @@ $(document).ready(function() {
 			} else {
 				$currTime = new Date();
 				$displayStopTime = $currTime.getTime();
+				theBigDay = new Date("10:12:33")
+				alert(theBigDay)
 				global_timecaptain.tools.addRecord($displayStartTime, $displayStopTime);
 				
 				$("#start_stop_button .ui-btn-text").html('Start');

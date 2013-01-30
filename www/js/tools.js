@@ -113,11 +113,16 @@ global_timecaptain.tools.getAndShowAllRecords = function($temp_message){
 									
 					var newTime = new Date(temp_time);
 					var temp_view_month = newTime.getMonth() + 1;
+					if (temp_view_month < 10) {temp_view_month = '0' + temp_view_month}
 					var temp_view_day = newTime.getDate();
+					if (temp_view_day < 10) {temp_view_day = '0' + temp_view_day}					
 					var temp_view_year = newTime.getFullYear();
 					var temp_view_hours = newTime.getHours();
+					if (temp_view_hours < 10) {temp_view_hours = '0' + temp_view_hours}
 					var temp_view_minutes = newTime.getMinutes();
+					if (temp_view_minutes < 10) {temp_view_minutes = '0' + temp_view_minutes}
 					var temp_view_seconds = newTime.getSeconds();
+					if (temp_view_seconds < 10) {temp_view_seconds = '0' + temp_view_seconds}
 
 					if (temp_time_day_flag == 1) {
 						var temp_view_time = temp_view_hours + ':' + temp_view_minutes;					
@@ -187,6 +192,8 @@ global_timecaptain.tools.showSingleRecord = function(){
 					
 					
 					$('#single_view').trigger('create');
+					
+				
 			}
 		});
 			
